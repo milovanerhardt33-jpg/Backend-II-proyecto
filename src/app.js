@@ -1,4 +1,5 @@
 import express from 'express'
+import cookieParser from 'cookie-parser'
 
 import { connectDB } from './config/database.js'
 // import usersRouter from './routes/users.routes.js'
@@ -9,6 +10,7 @@ import eventsRouter from './routes/events.routes.js'
 const app = express()
 
 app.use(express.json())
+app.use(cookieParser())
 
 connectDB()
 

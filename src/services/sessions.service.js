@@ -1,5 +1,6 @@
 import * as usersRepository from '../repositories/users.repository.js'
-import { hashPassword } from '../utils/hash.js'
+import { hashPassword, comparePassword } from '../utils/hash.js'
+import { generateToken } from '../utils/jwt.js'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const MIN_PASSWORD_LENGTH = 6
@@ -58,4 +59,33 @@ export const registerUser = async ({ first_name, last_name, email, password }) =
     email: newUser.email,
     role: newUser.role
   }
+}
+
+export const loginUser = async ({ email, password }) => {
+  // 1. Validar presencia de campos obligatorios
+  if (!email || !password) {
+    throw new ServiceError(401, 'Credenciales inválidas')
+  }
+
+  const normalizedEmail = email.trim().toLowerCase()
+
+  // 2. Buscar usuario por email
+  const user = await usersRepository.findUserByEmail(normalizedEmail)
+
+  // 3. Comparar contraseña. Mismo mensaje genérico tanto si el usuario
+  // no existe como si la contraseña no coincide: nunca se revela cuál falló.
+  const passwordMatches = user ? await comparePassword(password, user.password) : false
+
+  if (!user || !passwordMatches) {
+    throw new ServiceError(401, 'Credenciales inválidas')
+  }
+
+  // 4. Generar JWT con payload mínimo (sin password)
+  const token = generateToken({
+    id: user._id,
+    email: user.email,
+    role: user.role
+  })
+
+  return { token }
 }
