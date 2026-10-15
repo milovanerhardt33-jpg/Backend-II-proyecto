@@ -1,6 +1,5 @@
 import * as usersRepository from '../repositories/users.repository.js'
 import { hashPassword, comparePassword } from '../utils/hash.js'
-import { generateToken } from '../utils/jwt.js'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const MIN_PASSWORD_LENGTH = 6
@@ -61,7 +60,10 @@ export const registerUser = async ({ first_name, last_name, email, password }) =
   }
 }
 
-export const loginUser = async ({ email, password }) => {
+// Valida credenciales de login. NO genera el JWT: eso es responsabilidad
+// del controller una vez que Passport confirma que el usuario es válido.
+// Usada por la estrategia 'login' de Passport (src/config/passport.config.js).
+export const validateCredentials = async ({ email, password }) => {
   // 1. Validar presencia de campos obligatorios
   if (!email || !password) {
     throw new ServiceError(401, 'Credenciales inválidas')
@@ -80,12 +82,12 @@ export const loginUser = async ({ email, password }) => {
     throw new ServiceError(401, 'Credenciales inválidas')
   }
 
-  // 4. Generar JWT con payload mínimo (sin password)
-  const token = generateToken({
+  // 4. Devolver únicamente datos seguros (sin password)
+  return {
     id: user._id,
+    first_name: user.first_name,
+    last_name: user.last_name,
     email: user.email,
     role: user.role
-  })
-
-  return { token }
+  }
 }
