@@ -14,3 +14,7 @@ export const findUserByEmail = async (email) => {
 export const findUserById = async (id) => {
   return usersDao.findUserById(id)
 }
+
+export const findAllUsers = async () => {
+  return usersDao.findAllUsers()
+}

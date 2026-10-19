@@ -13,3 +13,8 @@ export const findUserByEmail = async (email) => {
 export const findUserById = async (id) => {
   return UserModel.findById(id)
 }
+
+export const findAllUsers = async () => {
+  // Nunca se expone el password, ni siquiera hasheado.
+  return UserModel.find().select('-password')
+}
