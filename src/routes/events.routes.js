@@ -6,6 +6,7 @@ import {
   updateEvent,
   updateEventStatus
 } from '../controllers/events.controller.js'
+import { createTicket, getEventTickets } from '../controllers/tickets.controller.js'
 import { auth } from '../middlewares/auth.middleware.js'
 import { authorize } from '../middlewares/authorize.middleware.js'
 
@@ -25,5 +26,13 @@ router.put('/:id', auth, authorize(['organizer', 'admin']), updateEvent)
 
 // Cambiar de estado (incluye "cancelar"): NUNCA se borra el evento.
 router.patch('/:id/status', auth, authorize(['organizer', 'admin']), updateEventStatus)
+
+// Inscripción a un evento: cualquier usuario autenticado (401 sin sesión).
+// Todas las validaciones (evento publicado, cupos, duplicados) viven en el service.
+router.post('/:eid/tickets', auth, createTicket)
+
+// Ver las inscripciones de un evento: requiere rol organizer/admin (403 para
+// un user común) y además ser el dueño de ESE evento, o admin (lo valida el service).
+router.get('/:eid/tickets', auth, authorize(['organizer', 'admin']), getEventTickets)
 
 export default router

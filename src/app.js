@@ -6,7 +6,7 @@ import { connectDB } from './config/database.js'
 import { initializePassport } from './config/passport.config.js'
 import usersRouter from './routes/users.routes.js'
 import sessionsRouter from './routes/sessions.routes.js'
-// import ticketsRouter from './routes/tickets.routes.js'
+import ticketsRouter from './routes/tickets.routes.js'
 import eventsRouter from './routes/events.routes.js'
 
 const app = express()
@@ -26,7 +26,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/users', usersRouter)
 app.use('/api/sessions', sessionsRouter)
-// app.use('/api/tickets', ticketsRouter)
+app.use('/api/tickets', ticketsRouter)
 app.use('/api/events', eventsRouter)
 
 export default app
