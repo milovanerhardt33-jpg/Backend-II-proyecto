@@ -2,10 +2,23 @@ import * as eventsService from '../services/events.service.js'
 
 export const getEvents = async (req, res) => {
   try {
-    const events = await eventsService.listEvents()
-    res.json({ status: 'success', payload: events })
+    const result = await eventsService.listEvents(req.query)
+    res.json({ status: 'success', payload: result })
   } catch (error) {
-    res.status(500).json({ status: 'error', message: 'Error al obtener eventos' })
+    const status = error.status || 500
+    const message = error.status ? error.message : 'Error al obtener eventos'
+    res.status(status).json({ status: 'error', message })
+  }
+}
+
+export const getEventById = async (req, res) => {
+  try {
+    const event = await eventsService.getEventById(req.params.id)
+    res.json({ status: 'success', payload: event })
+  } catch (error) {
+    const status = error.status || 500
+    const message = error.status ? error.message : 'Error al obtener el evento'
+    res.status(status).json({ status: 'error', message })
   }
 }
 
@@ -38,13 +51,17 @@ export const updateEvent = async (req, res) => {
   }
 }
 
-export const cancelEvent = async (req, res) => {
+export const updateEventStatus = async (req, res) => {
   try {
-    await eventsService.cancelEvent({ eventId: req.params.id, user: req.user })
-    res.json({ status: 'success', message: 'Evento cancelado' })
+    const event = await eventsService.updateEventStatus({
+      eventId: req.params.id,
+      status: req.body.status,
+      user: req.user
+    })
+    res.json({ status: 'success', payload: event })
   } catch (error) {
     const status = error.status || 500
-    const message = error.status ? error.message : 'Error al cancelar el evento'
+    const message = error.status ? error.message : 'Error al cambiar el estado del evento'
     res.status(status).json({ status: 'error', message })
   }
 }

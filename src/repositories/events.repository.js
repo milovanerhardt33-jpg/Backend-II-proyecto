@@ -6,8 +6,8 @@ export const createEvent = async (eventData) => {
   return eventsDao.createEvent(eventData)
 }
 
-export const findAllEvents = async () => {
-  return eventsDao.findAllEvents()
+export const findEvents = async (query) => {
+  return eventsDao.findEvents(query)
 }
 
 export const findEventById = async (id) => {
@@ -16,8 +16,4 @@ export const findEventById = async (id) => {
 
 export const updateEvent = async (id, updates) => {
   return eventsDao.updateEvent(id, updates)
-}
-
-export const deleteEvent = async (id) => {
-  return eventsDao.deleteEvent(id)
 }

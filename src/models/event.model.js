@@ -1,14 +1,23 @@
 import mongoose from 'mongoose'
 
+export const EVENT_STATUS_VALUES = ['draft', 'published', 'cancelled', 'finished']
+
 const eventSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true
+      required: true,
+      trim: true
     },
     description: {
       type: String,
-      required: true
+      required: true,
+      trim: true
+    },
+    category: {
+      type: String,
+      required: true,
+      trim: true
     },
     date: {
       type: Date,
@@ -16,15 +25,31 @@ const eventSchema = new mongoose.Schema(
     },
     location: {
       type: String,
-      required: true
+      required: true,
+      trim: true
     },
     capacity: {
       type: Number,
+      required: true,
+      min: 1
+    },
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
       default: 0
     },
+    status: {
+      type: String,
+      enum: EVENT_STATUS_VALUES,
+      default: 'draft'
+    },
+    // Referencia al usuario dueño del evento. NUNCA se guarda el objeto
+    // completo del usuario acá, solo su _id (populate bajo demanda).
     organizer: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
+      required: true
     }
   },
   {

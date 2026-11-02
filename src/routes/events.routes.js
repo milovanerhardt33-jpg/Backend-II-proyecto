@@ -1,20 +1,29 @@
 import { Router } from 'express'
-import { getEvents, createEvent, updateEvent, cancelEvent } from '../controllers/events.controller.js'
+import {
+  getEvents,
+  getEventById,
+  createEvent,
+  updateEvent,
+  updateEventStatus
+} from '../controllers/events.controller.js'
 import { auth } from '../middlewares/auth.middleware.js'
 import { authorize } from '../middlewares/authorize.middleware.js'
 
 const router = Router()
 
-// Pública: consultar eventos no requiere sesión.
+// Públicas: consultar eventos no requiere sesión.
 router.get('/', getEvents)
+router.get('/:id', getEventById)
 
 // Crear eventos: requiere sesión (401) y rol organizer o admin (403 para user).
 router.post('/', auth, authorize(['organizer', 'admin']), createEvent)
 
-// Modificar / cancelar: requiere sesión + rol organizer o admin.
-// La propiedad del recurso (solo el dueño, o cualquiera si es admin) se
-// valida dentro del service, no acá.
+// Modificar: requiere sesión + rol organizer/admin. La propiedad del
+// recurso (solo el dueño, o cualquiera si es admin) y las reglas de
+// negocio (evento cancelado, fechas, etc.) se validan en el service.
 router.put('/:id', auth, authorize(['organizer', 'admin']), updateEvent)
-router.delete('/:id', auth, authorize(['organizer', 'admin']), cancelEvent)
+
+// Cambiar de estado (incluye "cancelar"): NUNCA se borra el evento.
+router.patch('/:id/status', auth, authorize(['organizer', 'admin']), updateEventStatus)
 
 export default router
