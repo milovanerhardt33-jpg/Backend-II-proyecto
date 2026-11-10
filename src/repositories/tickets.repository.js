@@ -1,31 +1,41 @@
-import * as ticketsDao from '../dao/tickets.dao.js'
+import { TicketDAO } from '../dao/tickets.dao.js'
 
-// Capa de repositorio: intermediario entre los services y el DAO.
+export class TicketRepository {
+  constructor(dao = new TicketDAO()) {
+    this.dao = dao
+  }
 
-export const createTicket = async (ticketData) => {
-  return ticketsDao.createTicket(ticketData)
+  create(ticketData) {
+    return this.dao.create(ticketData)
+  }
+
+  findById(id) {
+    return this.dao.findById(id)
+  }
+
+  // Inscripción vigente (confirmed/pending) de un usuario a un evento.
+  findActiveByUserAndEvent(userId, eventId) {
+    return this.dao.findActiveByUserAndEvent(userId, eventId)
+  }
+
+  // Cupos ocupados de un evento: suma de "quantity" de los tickets activos
+  // (cuenta lugares, no documentos: un ticket puede reservar varios).
+  countActiveSeatsByEvent(eventId) {
+    return this.dao.sumActiveQuantityByEvent(eventId)
+  }
+
+  findByUser(userId) {
+    return this.dao.findByUser(userId)
+  }
+
+  findByEvent(eventId) {
+    return this.dao.findByEvent(eventId)
+  }
+
+  // Cancelar NO borra: marca el ticket como cancelado y registra cuándo.
+  cancelTicket(ticketId) {
+    return this.dao.update(ticketId, { status: 'cancelled', cancelledAt: new Date() })
+  }
 }
 
-export const findTicketById = async (id) => {
-  return ticketsDao.findTicketById(id)
-}
-
-export const findActiveTicketByUserAndEvent = async (userId, eventId) => {
-  return ticketsDao.findActiveTicketByUserAndEvent(userId, eventId)
-}
-
-export const sumActiveQuantityByEvent = async (eventId) => {
-  return ticketsDao.sumActiveQuantityByEvent(eventId)
-}
-
-export const findTicketsByUser = async (userId) => {
-  return ticketsDao.findTicketsByUser(userId)
-}
-
-export const findTicketsByEvent = async (eventId) => {
-  return ticketsDao.findTicketsByEvent(eventId)
-}
-
-export const updateTicket = async (id, updates) => {
-  return ticketsDao.updateTicket(id, updates)
-}
+export const ticketsRepository = new TicketRepository()

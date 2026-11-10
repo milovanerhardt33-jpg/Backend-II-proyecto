@@ -1,9 +1,5 @@
 import mongoose from 'mongoose'
-
-export const TICKET_STATUS_VALUES = ['confirmed', 'pending', 'cancelled']
-
-// Estados que OCUPAN cupo. Un ticket "cancelled" nunca cuenta.
-export const ACTIVE_TICKET_STATUSES = ['confirmed', 'pending']
+import { TICKET_STATUS_VALUES, ACTIVE_TICKET_STATUSES } from '../constants/ticket-status.js'
 
 const ticketSchema = new mongoose.Schema(
   {

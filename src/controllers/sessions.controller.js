@@ -1,4 +1,5 @@
 import { generateToken, COOKIE_NAME } from '../utils/jwt.js'
+import { UserDTO, CurrentUserDTO } from '../dtos/user.dto.js'
 
 const COOKIE_MAX_AGE = 3600000 // 1 hora, en ms
 
@@ -11,8 +12,8 @@ const cookieOptions = () => ({
 
 export const register = (req, res) => {
   // La estrategia 'register' de Passport ya validó, normalizó, hasheó
-  // y persistió al usuario. req.user trae los datos seguros (sin password).
-  res.status(201).json({ status: 'success', payload: req.user })
+  // y persistió al usuario. La respuesta pasa por el DTO: sin password.
+  res.status(201).json({ status: 'success', payload: new UserDTO(req.user) })
 }
 
 export const login = (req, res) => {
@@ -27,9 +28,8 @@ export const login = (req, res) => {
 
 export const current = (req, res) => {
   // La estrategia 'current' de Passport ya verificó el JWT de la cookie
-  // y cargó su payload en req.user.
-  const { id, email, role } = req.user
-  res.status(200).json({ status: 'success', payload: { id, email, role } })
+  // y cargó su payload en req.user. El DTO deja pasar solo id, email y role.
+  res.status(200).json({ status: 'success', payload: new CurrentUserDTO(req.user) })
 }
 
 export const logout = (req, res) => {

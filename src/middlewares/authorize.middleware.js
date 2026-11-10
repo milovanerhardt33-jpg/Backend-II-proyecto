@@ -1,3 +1,5 @@
+import { ForbiddenError } from '../utils/errors.js'
+
 // Middleware de autorización reutilizable. Recibe la lista de roles
 // permitidos y la compara contra req.user.role (ya cargado por el
 // middleware de autenticación, que SIEMPRE debe ir antes que este).
@@ -8,10 +10,7 @@ export const authorize = (allowedRoles = []) => (req, res, next) => {
   const role = req.user?.role
 
   if (!role || !allowedRoles.includes(role)) {
-    return res.status(403).json({
-      status: 'error',
-      message: 'No tenés permisos para realizar esta acción'
-    })
+    return next(new ForbiddenError())
   }
 
   next()

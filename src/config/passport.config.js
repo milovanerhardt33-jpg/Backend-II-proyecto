@@ -5,6 +5,7 @@ import 'dotenv/config'
 
 import { registerUser, validateCredentials } from '../services/sessions.service.js'
 import { COOKIE_NAME } from '../utils/jwt.js'
+import { AppError } from '../utils/errors.js'
 
 // Extrae el JWT desde la cookie "currentUser" en lugar del header Authorization.
 const cookieExtractor = (req) => {
@@ -12,6 +13,18 @@ const cookieExtractor = (req) => {
     return req.cookies[COOKIE_NAME] || null
   }
   return null
+}
+
+// Traduce el resultado de un service a lo que espera Passport:
+//  - errores esperados de negocio (AppError: 400, 401, 409...) → rechazo con
+//    su status y mensaje, que passportCall envía al middleware de errores;
+//  - cualquier otro error (base caída, bug) → se propaga como error real
+//    (500), en vez de disfrazarse de "credenciales inválidas".
+const failAuth = (done, error) => {
+  if (error instanceof AppError) {
+    return done(null, false, { status: error.status, message: error.message })
+  }
+  return done(error)
 }
 
 // Centraliza la configuración de todas las estrategias de autenticación.
@@ -32,13 +45,11 @@ export const initializePassport = () => {
       },
       async (req, email, password, done) => {
         try {
-          const { first_name, last_name } = req.body
+          const { first_name, last_name } = req.body ?? {}
           const user = await registerUser({ first_name, last_name, email, password })
           return done(null, user)
         } catch (error) {
-          // info.status/info.message viajan hasta el middleware passportCall,
-          // que los usa para responder con el status correcto (400, 409, etc.)
-          return done(null, false, { status: error.status, message: error.message })
+          return failAuth(done, error)
         }
       }
     )
@@ -59,7 +70,7 @@ export const initializePassport = () => {
           const user = await validateCredentials({ email, password })
           return done(null, user)
         } catch (error) {
-          return done(null, false, { status: error.status, message: error.message })
+          return failAuth(done, error)
         }
       }
     )
