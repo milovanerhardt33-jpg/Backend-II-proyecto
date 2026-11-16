@@ -882,7 +882,7 @@ La contraseña se hashea con bcrypt antes de guardarse, nunca viaja en el JWT y 
 
 ### Colección de Postman
 
-`docs/postman/plataforma-eventos.postman_collection.json` automatiza el flujo anterior (27 requests con tests). Para usarla:
+`docs/postman/plataforma-eventos.postman_collection.json` automatiza el flujo anterior (30 requests con tests). Para usarla:
 
 1. Correr `npm run seed` y levantar la API (`npm run dev`).
 2. Importar la colección en Postman y completar la variable `seedPassword` con el valor de `SEED_PASSWORD`.
