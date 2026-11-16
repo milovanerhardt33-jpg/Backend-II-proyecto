@@ -56,7 +56,7 @@ export class BaseDAO {
     if (!mongoose.isValidObjectId(id)) return null
     try {
       return await this.model
-        .findByIdAndUpdate(id, updates, { new: true, runValidators: true })
+        .findByIdAndUpdate(id, updates, { returnDocument: 'after', runValidators: true })
         .lean()
     } catch (error) {
       throw translateDuplicateKey(error)
