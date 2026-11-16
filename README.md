@@ -65,6 +65,7 @@ cp .env.example .env
 | `MAIL_PASS`      | Contraseña de la cuenta SMTP (en Gmail: una *contraseña de aplicación*, no la clave normal) |
 | `MAIL_FROM`      | Remitente que ven los destinatarios (ej. `Eventos <no-reply@midominio.com>`) |
 | `SEED_PASSWORD`  | Contraseña de los usuarios de prueba que crea `npm run seed` (opcional, solo desarrollo) |
+| `DNS_SERVERS`    | Opcional. Si al conectar a Atlas aparece `querySrv ECONNREFUSED` (tu red rechaza la consulta DNS SRV de Node), poné `8.8.8.8,1.1.1.1` para forzar el DNS. Si todo funciona, dejalo vacío |
 
 Las cinco variables `MAIL_*` se leen **solo** desde `process.env` (nunca están escritas en el código). Si falta alguna, la inscripción (o la cancelación) igual funciona: el mail no se envía, se avisa por consola y la respuesta trae `emailSent: false`. `SEED_PASSWORD` solo la usa `npm run seed` (usuarios de prueba, ver más abajo). El archivo `.env` real **nunca se sube** al repositorio (está en `.gitignore`).
 
