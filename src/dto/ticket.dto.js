@@ -7,7 +7,7 @@ import { EventSummaryDTO } from './event.dto.js'
 // expone password ni nada más allá de nombre y email).
 export class TicketDTO {
   constructor(ticket) {
-    this._id = idToString(ticket._id)
+    this.id = idToString(ticket._id)
     this.user = isPopulated(ticket.user) ? new AttendeeDTO(ticket.user) : idToString(ticket.user)
     this.event = isPopulated(ticket.event) ? new EventSummaryDTO(ticket.event) : idToString(ticket.event)
     this.status = ticket.status

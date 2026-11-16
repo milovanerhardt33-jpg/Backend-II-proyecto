@@ -1,5 +1,5 @@
 import { generateToken, COOKIE_NAME } from '../utils/jwt.js'
-import { UserDTO, CurrentUserDTO } from '../dtos/user.dto.js'
+import { UserDTO, CurrentUserDTO } from '../dto/user.dto.js'
 
 const COOKIE_MAX_AGE = 3600000 // 1 hora, en ms
 

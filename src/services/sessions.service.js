@@ -1,5 +1,5 @@
 import { usersRepository } from '../repositories/users.repository.js'
-import { UserDTO } from '../dtos/user.dto.js'
+import { UserDTO } from '../dto/user.dto.js'
 import { hashPassword, comparePassword } from '../utils/hash.js'
 import { BadRequestError, ConflictError, UnauthorizedError, DuplicateKeyError } from '../utils/errors.js'
 

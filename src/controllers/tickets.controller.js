@@ -1,5 +1,5 @@
 import * as ticketsService from '../services/tickets.service.js'
-import { TicketDTO } from '../dtos/ticket.dto.js'
+import { TicketDTO } from '../dto/ticket.dto.js'
 
 // Solo request/response: toda la validación y las reglas de negocio viven en
 // services/tickets.service.js. Los errores los resuelve el middleware central.
@@ -27,9 +27,9 @@ export const getEventTickets = async (req, res) => {
 }
 
 export const cancelTicket = async (req, res) => {
-  const ticket = await ticketsService.cancelTicket({
+  const { ticket, emailSent } = await ticketsService.cancelTicket({
     ticketId: req.params.tid,
     user: req.user
   })
-  res.json({ status: 'success', payload: new TicketDTO(ticket) })
+  res.json({ status: 'success', payload: new TicketDTO(ticket), emailSent })
 }

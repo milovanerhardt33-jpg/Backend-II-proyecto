@@ -1,7 +1,7 @@
 import { ticketsRepository } from '../repositories/tickets.repository.js'
 import { eventsRepository } from '../repositories/events.repository.js'
 import { usersRepository } from '../repositories/users.repository.js'
-import { sendEnrollmentConfirmation } from './mail.service.js'
+import { sendEnrollmentConfirmation, sendCancellationNotice } from './mail.service.js'
 import { generateReservationCode } from '../utils/reservation-code.js'
 import {
   BadRequestError,
@@ -57,7 +57,7 @@ export const enroll = async ({ eventId, userId, quantity }) => {
 
   const existing = await ticketsRepository.findActiveByUserAndEvent(userId, event._id)
   if (existing) {
-    throw new ConflictError('Ya tenés una inscripción activa para este evento')
+    throw new ConflictError('Ya tenés una inscripción activa a este evento')
   }
 
   // Cupos ocupados: solo tickets activos. Los cancelados no ocupan lugar.
@@ -110,7 +110,7 @@ const createTicketWithUniqueCode = async (data) => {
         continue
       }
       if (error.fields.includes('user') || error.fields.includes('event')) {
-        throw new ConflictError('Ya tenés una inscripción activa para este evento')
+        throw new ConflictError('Ya tenés una inscripción activa a este evento')
       }
       throw error
     }
@@ -163,5 +163,22 @@ export const cancelTicket = async ({ ticketId, user }) => {
     throw new ConflictError('El ticket ya está cancelado')
   }
 
-  return ticketsRepository.cancelTicket(ticketId)
+  const cancelledTicket = await ticketsRepository.cancelTicket(ticketId)
+
+  // El aviso va al DUEÑO del ticket, aunque lo haya cancelado un admin.
+  // Es best-effort: si el mail falla, la cancelación igual quedó hecha.
+  const [owner, event] = await Promise.all([
+    usersRepository.findById(ticket.user),
+    eventsRepository.findById(ticket.event)
+  ])
+  const emailSent = owner && event
+    ? await sendCancellationNotice({
+        to: owner.email,
+        firstName: owner.first_name,
+        event,
+        ticket: cancelledTicket
+      })
+    : false
+
+  return { ticket: cancelledTicket, emailSent }
 }

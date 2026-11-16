@@ -1,15 +1,17 @@
 {
-  "name": "backend_77045_lun",
+  "name": "plataforma-eventos-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/server.js"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed": "node scripts/seed.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "API REST de la Plataforma de Eventos e Inscripciones (Backend II): Express, MongoDB, Passport, JWT y Nodemailer, en capas.",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -24,5 +26,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

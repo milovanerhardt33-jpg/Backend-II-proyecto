@@ -29,7 +29,7 @@ export class CurrentUserDTO {
 // Listado administrativo (GET /api/users).
 export class UserAdminDTO {
   constructor(user) {
-    this._id = idToString(user._id)
+    this.id = idToString(user._id)
     this.first_name = user.first_name
     this.last_name = user.last_name
     this.email = user.email
@@ -46,7 +46,7 @@ export class UserAdminDTO {
 // Asistente de un ticket (cuando el ticket trae el usuario populado).
 export class AttendeeDTO {
   constructor(user) {
-    this._id = idToString(user._id)
+    this.id = idToString(user._id)
     this.first_name = user.first_name
     this.last_name = user.last_name
     this.email = user.email

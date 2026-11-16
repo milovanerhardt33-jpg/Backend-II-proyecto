@@ -1,5 +1,5 @@
 import * as eventsService from '../services/events.service.js'
-import { EventDTO } from '../dtos/event.dto.js'
+import { EventDTO } from '../dto/event.dto.js'
 
 // Los controllers solo coordinan request/response: extraen datos de
 // body/params/query, llaman al service y devuelven el resultado mapeado con
@@ -8,7 +8,8 @@ import { EventDTO } from '../dtos/event.dto.js'
 
 export const getEvents = async (req, res) => {
   const result = await eventsService.listEvents(req.query)
-  res.json({ status: 'success', payload: { ...result, data: EventDTO.list(result.data) } })
+  // Listado paginado: data + page, limit, total y totalPages en el nivel superior.
+  res.json({ status: 'success', ...result, data: EventDTO.list(result.data) })
 }
 
 export const getEventById = async (req, res) => {
